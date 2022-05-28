@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import Table from "./Table";
 
 const Form = () => {
   const [form, setForm] = useState({});
+  const [data, setData] = useState([]);
 
   const onChange = (e) => {
     let { name, value, type, checked, files } = e.target;
@@ -25,7 +27,19 @@ const Form = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(form);
+    // console.log(form)
+    fetch(`http://localhost:3040/data`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({...form}),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        setData({...form, d});
+        setForm("");
+      });
   };
   return (
     <div>
@@ -40,6 +54,7 @@ const Form = () => {
               id="name"
               value={form.name}
               onChange={onChange}
+              required
             />
           </div>
           <div>
@@ -50,6 +65,7 @@ const Form = () => {
               id="age"
               value={form.age}
               onChange={onChange}
+              required
             />
           </div>
           <div>
@@ -60,6 +76,7 @@ const Form = () => {
               id="address"
               value={form.address}
               onChange={onChange}
+              required
             />
           </div>
           <div>
@@ -69,8 +86,9 @@ const Form = () => {
               id="department"
               value={form.department}
               onChange={onChange}
+              required
             >
-                <option value="">Select Department</option>
+              <option value="">Select Department</option>
               <option value="Manager">Manager</option>
               <option value="Executive Officer">Executive Officer</option>
               <option value="Officer">Officer</option>
@@ -86,6 +104,7 @@ const Form = () => {
               id="salary"
               value={form.salary}
               onChange={onChange}
+              required
             />
           </div>
           <div>
@@ -115,11 +134,13 @@ const Form = () => {
               id="profile"
               files={form.profile}
               onChange={onChange}
+              required
             />
           </div>
           <button type="submit">Submit</button>
         </form>
       </div>
+      <Table setData={setData} data={data} />
     </div>
   );
 };
